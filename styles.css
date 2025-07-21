@@ -10,12 +10,19 @@ body {
 
 .game {
   display: grid;
-  grid-template-columns: 40px 40px 40px;
-  grid-template-rows: 40px 40px 40px;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
   margin: 100px;
 }
 
 .cell {
   border: 1px solid black;
-  padding: 15px;
+  font-size: 2rem;
+  font-family: sans-serif;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #f0f0f0;
 }

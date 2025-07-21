@@ -5,7 +5,7 @@ const Player = (name, marker) => {
 
 // Gameboard module
 const Gameboard = (() => {
-  let board = ["", "", "", "", "", "", "", "", ""];
+  let board = ["X", "0", "X", "X", "0", "X", "0", "0", "X"];
 
   const getBoard = () => board;
 
@@ -17,11 +17,28 @@ const Gameboard = (() => {
     return false;
   };
 
+  const getCell = (index) => {
+    return board[index];
+  };
+
   const resetBoard = () => {
     board = ["", "", "", "", "", "", "", "", ""];
   };
 
-  return { getBoard, setCell, resetBoard };
+  return { getBoard, setCell, getCell, resetBoard };
+})();
+
+// Display the board on the webpage
+const DisplayController = (() => {
+  const fillCells = () => {
+    let cell;
+    for (let index = 0; index < 9; index++) {
+      cell = document.getElementById(index);
+      cell.innerText = Gameboard.getCell(index);
+    }
+  };
+
+  return { fillCells };
 })();
 
 // Starting game function
@@ -78,13 +95,4 @@ function endGame(currentPlayer) {
   return false;
 }
 
-function playGame() {
-  const Players = startGame("Amina", "Youcef");
-  endGame(playRound(Players.player1, 0));
-  endGame(playRound(Players.player2, 4));
-  endGame(playRound(Players.player1, 3));
-  endGame(playRound(Players.player2, 5));
-  endGame(playRound(Players.player1, 6));
-}
-
-
+DisplayController.fillCells();
