@@ -5,7 +5,7 @@ const Player = (name, marker) => {
 
 // Gameboard module
 const Gameboard = (() => {
-  let board = ["X", "0", "X", "X", "0", "X", "0", "0", "X"];
+  let board = ["X", "0", "X", "X", "0", "X", "0", "", ""];
 
   const getBoard = () => board;
 
@@ -95,4 +95,24 @@ function endGame(currentPlayer) {
   return false;
 }
 
+function addMark(player) {
+  let cells = document.querySelectorAll(".cell");
+  cells.forEach((cell) => {
+    cell.addEventListener("click", () => {
+      if (cell.innerText === "") {
+        cell.innerText = player.marker;
+      }
+    });
+  });
+}
+
+function reset() {
+  const reset = document.getElementById("reset");
+  reset.addEventListener("click", () => {
+    Gameboard.resetBoard();
+    DisplayController.fillCells();
+  });
+}
+
+reset();
 DisplayController.fillCells();
