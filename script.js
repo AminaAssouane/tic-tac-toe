@@ -34,18 +34,24 @@ const Gameboard = (() => {
 
 // Display the board on the webpage
 const DisplayController = (() => {
+  let currentPlayer;
+  let player1;
+  let player2;
+
   const startGame = () => {
     let startButton = document.getElementById("startGame");
     startButton.addEventListener("click", () => {
+      restart();
+
       let name1 = prompt("What is the first player name : ");
       let name2 = prompt("What is the second player name : ");
 
-      const player1 = Player(name1, "X");
-      const player2 = Player(name2, "O");
-      let currentPlayer = player1;
+      player1 = Player(name1, "X");
+      player2 = Player(name2, "O");
+      currentPlayer = player1;
 
       fillBoard();
-      addMark(currentPlayer, { player1, player2 });
+      addMark();
     });
   };
 
@@ -57,17 +63,29 @@ const DisplayController = (() => {
     }
   };
 
-  const addMark = (currentPlayer, { player1, player2 }) => {
+  const addMark = () => {
     let cells = document.querySelectorAll(".cell");
     cells.forEach((cell) => {
       cell.addEventListener("click", () => {
-        if (cell.innerText === "") {
+        if (
+          cell.innerText === "" &&
+          !markersAlign(Gameboard.getBoard()) &&
+          !Gameboard.fullBoard(Gameboard.getBoard())
+        ) {
           cell.innerText = currentPlayer.marker;
           Gameboard.setCell(cell.id, currentPlayer.marker);
           console.log(
             `${currentPlayer.name} put a ${currentPlayer.marker} on the ${cell.id} index on the board.`
           );
-          let end = endGame(currentPlayer);
+          if (markersAlign(Gameboard.getBoard())) {
+            let winnerName = document.getElementById("winner");
+            winnerName.innerText = currentPlayer.name;
+            let win = document.getElementById("win");
+            win.style.display = "block";
+          } else if (Gameboard.fullBoard(Gameboard.getBoard())) {
+            let tie = document.getElementById("tie");
+            tie.style.display = "block";
+          }
 
           currentPlayer = switchPlayers(currentPlayer, { player1, player2 });
         }
@@ -75,10 +93,18 @@ const DisplayController = (() => {
     });
   };
 
+  const restart = () => {
+    Gameboard.resetBoard();
+    let win = document.getElementById("win");
+    win.style.display = "none";
+    let tie = document.getElementById("tie");
+    tie.style.display = "none";
+  };
+
   const reset = () => {
     const resetButton = document.getElementById("reset");
     resetButton.addEventListener("click", () => {
-      Gameboard.resetBoard();
+      restart();
       fillBoard();
     });
   };
@@ -109,19 +135,6 @@ function markersAlign(board) {
     return true;
   if (board[2] === board[4] && board[4] === board[6] && board[2] !== "")
     return true;
-  return false;
-}
-
-function endGame(currentPlayer) {
-  if (markersAlign(Gameboard.getBoard())) {
-    console.log(`${currentPlayer.name} won!`);
-    return true;
-  } else {
-    if (Gameboard.fullBoard(Gameboard.getBoard())) {
-      console.log("Its a tie!");
-      return true;
-    }
-  }
   return false;
 }
 
