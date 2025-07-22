@@ -21,16 +21,29 @@ const Gameboard = (() => {
     return board[index];
   };
 
+  const fullBoard = (board) => {
+    return !board.includes("");
+  };
+
   const resetBoard = () => {
     board = ["", "", "", "", "", "", "", "", ""];
   };
 
-  return { getBoard, setCell, getCell, resetBoard };
+  return { getBoard, setCell, getCell, fullBoard, resetBoard };
 })();
 
 // Display the board on the webpage
 const DisplayController = (() => {
-  const fillCells = () => {
+  const startGame = () => {
+    let startButton = document.getElementById("startGame");
+    startButton.addEventListener("click", () => {
+      let name1 = prompt("What is the first player name : ");
+      let name2 = prompt("What is the second player name : ");
+      return startGame(name1, name2);
+    });
+  };
+
+  const fillBoard = () => {
     let cell;
     for (let index = 0; index < 9; index++) {
       cell = document.getElementById(index);
@@ -38,7 +51,30 @@ const DisplayController = (() => {
     }
   };
 
-  return { fillCells };
+  const addMark = (player) => {
+    let cells = document.querySelectorAll(".cell");
+    cells.forEach((cell) => {
+      cell.addEventListener("click", () => {
+        if (cell.innerText === "") {
+          cell.innerText = player.marker;
+          Gameboard.setCell(cell.id, player.marker);
+          console.log(
+            `${player.name} put a ${player.marker} on the ${cell.id} index on the board.`
+          );
+        }
+      });
+    });
+  };
+
+  const reset = () => {
+    const resetButton = document.getElementById("reset");
+    resetButton.addEventListener("click", () => {
+      Gameboard.resetBoard();
+      fillBoard();
+    });
+  };
+
+  return { startGame, fillBoard, addMark, reset };
 })();
 
 // Starting game function
@@ -50,12 +86,10 @@ function startGame(name1, name2) {
   return { player1, player2 };
 }
 
-function playRound(player, index) {
-  Gameboard.setCell(index, player.marker);
-  console.log(
-    `${player.name} put a ${player.marker} on the ${index} index on the board.`
-  );
-  return player;
+// Switching players function
+function switchPlayers(currentPlayer, { player1, player2 }) {
+  if (currentPlayer === player1) return player2;
+  else return player1;
 }
 
 function markersAlign(board) {
@@ -78,16 +112,12 @@ function markersAlign(board) {
   return false;
 }
 
-function fullBoard(board) {
-  return !board.includes("");
-}
-
 function endGame(currentPlayer) {
   if (markersAlign(Gameboard.getBoard())) {
     console.log(`${currentPlayer.name} won!`);
     return true;
   } else {
-    if (fullBoard(Gameboard.getBoard())) {
+    if (Gameboard.fullBoard(Gameboard.getBoard())) {
       console.log("Its a tie!");
       return true;
     }
@@ -95,24 +125,13 @@ function endGame(currentPlayer) {
   return false;
 }
 
-function addMark(player) {
-  let cells = document.querySelectorAll(".cell");
-  cells.forEach((cell) => {
-    cell.addEventListener("click", () => {
-      if (cell.innerText === "") {
-        cell.innerText = player.marker;
-      }
-    });
-  });
-}
-
 function reset() {
   const reset = document.getElementById("reset");
   reset.addEventListener("click", () => {
     Gameboard.resetBoard();
-    DisplayController.fillCells();
+    DisplayController.fillBoard();
   });
 }
 
-reset();
-DisplayController.fillCells();
+DisplayController.reset();
+DisplayController.fillBoard();
