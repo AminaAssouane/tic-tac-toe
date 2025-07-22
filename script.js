@@ -37,9 +37,14 @@ const DisplayController = (() => {
   const startGame = () => {
     let startButton = document.getElementById("startGame");
     startButton.addEventListener("click", () => {
+      Gameboard.resetBoard();
       let name1 = prompt("What is the first player name : ");
       let name2 = prompt("What is the second player name : ");
-      return startGame(name1, name2);
+
+      const player1 = Player(name1, "X");
+      const player2 = Player(name2, "O");
+
+      return { player1, player2 };
     });
   };
 
@@ -76,15 +81,6 @@ const DisplayController = (() => {
 
   return { startGame, fillBoard, addMark, reset };
 })();
-
-// Starting game function
-function startGame(name1, name2) {
-  Gameboard.resetBoard();
-  const player1 = Player(name1, "X");
-  const player2 = Player(name2, "O");
-
-  return { player1, player2 };
-}
 
 // Switching players function
 function switchPlayers(currentPlayer, { player1, player2 }) {
@@ -135,3 +131,5 @@ function reset() {
 
 DisplayController.reset();
 DisplayController.fillBoard();
+
+function playGame() {}
