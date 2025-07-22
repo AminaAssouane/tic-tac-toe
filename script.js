@@ -5,7 +5,7 @@ const Player = (name, marker) => {
 
 // Gameboard module
 const Gameboard = (() => {
-  let board = ["X", "0", "X", "X", "0", "X", "0", "", ""];
+  let board = ["", "", "", "", "", "", "", "", ""];
 
   const getBoard = () => board;
 
@@ -37,14 +37,15 @@ const DisplayController = (() => {
   const startGame = () => {
     let startButton = document.getElementById("startGame");
     startButton.addEventListener("click", () => {
-      Gameboard.resetBoard();
       let name1 = prompt("What is the first player name : ");
       let name2 = prompt("What is the second player name : ");
 
       const player1 = Player(name1, "X");
       const player2 = Player(name2, "O");
+      let currentPlayer = player1;
 
-      return { player1, player2 };
+      fillBoard();
+      addMark(currentPlayer, { player1, player2 });
     });
   };
 
@@ -56,16 +57,19 @@ const DisplayController = (() => {
     }
   };
 
-  const addMark = (player) => {
+  const addMark = (currentPlayer, { player1, player2 }) => {
     let cells = document.querySelectorAll(".cell");
     cells.forEach((cell) => {
       cell.addEventListener("click", () => {
         if (cell.innerText === "") {
-          cell.innerText = player.marker;
-          Gameboard.setCell(cell.id, player.marker);
+          cell.innerText = currentPlayer.marker;
+          Gameboard.setCell(cell.id, currentPlayer.marker);
           console.log(
-            `${player.name} put a ${player.marker} on the ${cell.id} index on the board.`
+            `${currentPlayer.name} put a ${currentPlayer.marker} on the ${cell.id} index on the board.`
           );
+          let end = endGame(currentPlayer);
+
+          currentPlayer = switchPlayers(currentPlayer, { player1, player2 });
         }
       });
     });
@@ -129,7 +133,5 @@ function reset() {
   });
 }
 
+DisplayController.startGame();
 DisplayController.reset();
-DisplayController.fillBoard();
-
-function playGame() {}
